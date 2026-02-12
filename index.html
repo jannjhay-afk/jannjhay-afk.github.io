@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#03070b" />
+  <meta name="description" content="Islah Nexus — Offline-first AI reflection. A privacy-safe vault for your digital legacy." />
+
+  <title>Islah Nexus — Your digital legacy starts here</title>
+
+  <!-- Icons -->
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
+  <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png" />
+
+  <!-- If you want ZERO external calls, delete the two font links below. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root{
+      --bg: #03070b;
+      --panel: rgba(9, 20, 26, .62);
+      --stroke: rgba(150, 255, 245, .18);
+      --glow: rgba(120, 255, 245, .45);
+      --teal: #7bfff5;
+      --text: rgba(245, 255, 253, .92);
+      --muted: rgba(245, 255, 253, .70);
+      --shadow: 0 18px 50px rgba(0,0,0,.55);
+      --radius: 22px;
+    }
+
+    *{ box-sizing:border-box; }
+    html, body{ height:100%; }
+    body{
+      margin:0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      overflow-x:hidden;
+    }
+
+    /* Moving void background */
+    #void{
+      position:fixed;
+      inset:0;
+      width:100%;
+      height:100%;
+      z-index:-2;
+      display:block;
+      background: radial-gradient(1200px 700px at 50% 65%, rgba(80,255,240,.10), transparent 60%),
+                  radial-gradient(800px 500px at 55% 45%, rgba(120,255,245,.08), transparent 60%),
+                  #03070b;
+    }
+    .vignette{
+      position:fixed;
+      inset:0;
+      z-index:-1;
+      pointer-events:none;
+      background:
+        radial-gradient(1200px 800px at 50% 55%, rgba(0,0,0,0) 45%, rgba(0,0,0,.55) 82%, rgba(0,0,0,.85) 100%),
+        linear-gradient(to bottom, rgba(0,0,0,.58), rgba(0,0,0,.12) 35%, rgba(0,0,0,.62));
+    }
+
+    /* Top nav */
+    .nav{
+      position:sticky;
+      top:0;
+      z-index:50;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background: linear-gradient(to bottom, rgba(3,7,11,.78), rgba(3,7,11,.42));
+      border-bottom: 1px solid rgba(150,255,245,.10);
+    }
+    .nav-inner{
+      max-width: 1160px;
+      margin:0 auto;
+      padding: 14px 18px;
+      display:flex;
+      align-items:center;
+      gap:16px;
+      justify-content:space-between;
+    }
+    .brand-mini{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width: 210px;
+    }
+    .brand-mini img{
+      width:34px; height:34px;
+      filter: drop-shadow(0 0 14px rgba(120,255,245,.25));
+    }
+    .brand-mini .name{
+      font-family: Orbitron, Inter, system-ui, sans-serif;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      font-size: 12px;
+      opacity:.9;
+      white-space:nowrap;
+    }
+    .links{
+      display:flex;
+      gap: 18px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .links a{
+      color: rgba(245,255,253,.78);
+      text-decoration:none;
+      font-size: 13px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      transition: transform .15s ease, background .15s ease, color .15s ease;
+    }
+    .links a:hover{
+      color: var(--text);
+      background: rgba(120,255,245,.08);
+      transform: translateY(-1px);
+    }
+
+    /* Layout */
+    .wrap{ max-width: 1160px; margin: 0 auto; padding: 0 18px 84px; }
+    .hero{
+      padding: 68px 0 28px;
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 22px;
+      align-items:center;
+    }
+    @media (max-width: 900px){
+      .hero{ grid-template-columns: 1fr; padding-top: 48px; }
+      .brand-mini{ min-width:auto; }
+    }
+
+    .card{
+      background: linear-gradient(180deg, rgba(9,20,26,.68), rgba(9,20,26,.36));
+      border: 1px solid rgba(150,255,245,.14);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .hero-card{
+      padding: 26px 24px;
+      position:relative;
+      overflow:hidden;
+    }
+    .hero-card:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: radial-gradient(700px 260px at 20% 0%, rgba(120,255,245,.10), transparent 60%),
+                  radial-gradient(600px 240px at 90% 20%, rgba(120,255,245,.08), transparent 60%);
+      pointer-events:none;
+    }
+
+    .logo{
+      width:min(140px, 32vw);
+      aspect-ratio: 1/1;
+      display:block;
+      margin: 0 0 16px;
+      filter: drop-shadow(0 0 28px rgba(120,255,245,.30));
+    }
+
+    h1{
+      margin: 6px 0 10px;
+      font-family: Orbitron, Inter, system-ui, sans-serif;
+      font-size: clamp(32px, 4vw, 52px);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      line-height: 1.05;
+    }
+    .sub{
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: clamp(15px, 1.55vw, 18px);
+      line-height: 1.6;
+      max-width: 62ch;
+    }
+
+    .cta{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top: 8px;
+      position:relative;
+      z-index:1;
+    }
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding: 12px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(150,255,245,.18);
+      text-decoration:none;
+      color: var(--text);
+      font-weight:600;
+      font-size: 14px;
+      background: rgba(120,255,245,.06);
+      transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+    }
+    .btn:hover{ transform: translateY(-1px); box-shadow: 0 10px 30px rgba(0,0,0,.35); }
+    .btn.primary{
+      background: linear-gradient(180deg, rgba(120,255,245,.22), rgba(120,255,245,.08));
+      border-color: rgba(120,255,245,.35);
+    }
+    .btn.primary:hover{ box-shadow: 0 0 38px rgba(120,255,245,.18); }
+
+    .side{ padding: 18px 18px; }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      font-size: 12px;
+      color: rgba(245,255,253,.86);
+      border: 1px solid rgba(150,255,245,.16);
+      background: rgba(120,255,245,.06);
+      border-radius: 999px;
+      padding: 8px 10px;
+      margin-bottom: 12px;
+    }
+    .pill b{ color: var(--teal); font-weight:700; }
+    .side h3{
+      margin: 10px 0 10px;
+      font-family: Orbitron, Inter, system-ui, sans-serif;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      font-size: 14px;
+      color: rgba(245,255,253,.86);
+    }
+    .list{
+      margin: 0;
+      padding: 0;
+      list-style:none;
+      display:grid;
+      gap:10px;
+      color: rgba(245,255,253,.80);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .list li{
+      padding: 12px 12px;
+      border-radius: 14px;
+      background: rgba(0,0,0,.18);
+      border: 1px solid rgba(150,255,245,.10);
+    }
+    .list li span{
+      color: rgba(245,255,253,.65);
+      display:block;
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    section{ margin-top: 22px; scroll-margin-top: 92px; }
+    .section-card{ padding: 22px 22px; }
+    .section-title{
+      display:flex;
+      align-items:baseline;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom: 14px;
+    }
+    .section-title h2{
+      margin:0;
+      font-family: Orbitron, Inter, system-ui, sans-serif;
+      font-size: 18px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+    .section-title p{
+      margin:0;
+      color: rgba(245,255,253,.65);
+      font-size: 13px;
+      line-height: 1.4;
+      max-width: 70ch;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+    @media (max-width: 950px){ .grid{ grid-template-columns: 1fr; } }
+
+    .mini{
+      padding: 16px 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(150,255,245,.12);
+      background: rgba(0,0,0,.18);
+    }
+    .mini h4{
+      margin: 0 0 8px;
+      font-size: 14px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: rgba(245,255,253,.88);
+    }
+    .mini p{
+      margin:0;
+      color: rgba(245,255,253,.70);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .footer{
+      margin-top: 26px;
+      padding: 18px 0 0;
+      color: rgba(245,255,253,.55);
+      font-size: 12px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      justify-content:space-between;
+      align-items:center;
+    }
+    .footer a{ color: rgba(120,255,245,.75); text-decoration:none; }
+    .footer a:hover{ text-decoration:underline; }
+
+    @media (prefers-reduced-motion: reduce){
+      #void{ display:none; }
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="void" aria-hidden="true"></canvas>
+  <div class="vignette" aria-hidden="true"></div>
+
+  <header class="nav">
+    <div class="nav-inner">
+      <div class="brand-mini">
+        <img src="assets/logo.png" alt="Islah Nexus logo" />
+        <div class="name">ISLAH NEXUS</div>
+      </div>
+      <nav class="links" aria-label="Primary">
+        <a href="#home">Home</a>
+        <a href="#abstract">Abstract</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#sovereignty">Sovereignty</a>
+        <a href="#roadmap">Roadmap</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap" id="home">
+    <div class="hero">
+      <div class="card hero-card">
+        <img class="logo" src="assets/logo.png" alt="Islah Nexus" />
+        <h1>Islah Nexus</h1>
+        <p class="sub">
+          Offline-first AI reflection for everyday decisions — with a manual encrypted vault.
+          Calm your mind, rewrite your response, and keep your story sovereign.
+          <b style="color: var(--teal);">Your digital legacy starts here.</b>
+        </p>
+
+        <div class="cta">
+          <a class="btn primary" href="#roadmap">Explore Roadmap →</a>
+          <a class="btn" href="#abstract">Read Abstract</a>
+          <a class="btn" href="#contact">Contact</a>
+        </div>
+      </div>
+
+      <aside class="card side">
+        <div class="pill">Theme: <b>Void</b> · Spiral: <b>Active</b></div>
+        <h3>MVP promises</h3>
+        <ul class="list">
+          <li><b>Pause → Reflect → Rewrite</b><span>On-device suggestions to reduce regret replies.</span></li>
+          <li><b>Manual Save → Encrypted Vault</b><span>Keystore-backed encryption. You choose what becomes “legacy”.</span></li>
+          <li><b>Weekly Summary = Counts only</b><span>Metrics without content. Private by design.</span></li>
+        </ul>
+      </aside>
+    </div>
+
+    <section id="abstract" class="card section-card">
+      <div class="section-title">
+        <h2>Abstract</h2>
+        <p>Islah Nexus is a privacy-safe reflection tool: think clearly, act gently, and save only what you intentionally keep.</p>
+      </div>
+      <div class="grid">
+        <div class="mini"><h4>Problem</h4><p>Cloud AI can feel noisy and exposed. People want help thinking—without surrendering their inner life.</p></div>
+        <div class="mini"><h4>Solution</h4><p>Offline-first reflection with a manual vault: you decide what’s stored, and everything runs locally by default.</p></div>
+        <div class="mini"><h4>Outcome</h4><p>Fewer regret replies, better decisions, and a personal archive you control—built for long-term legacy.</p></div>
+      </div>
+    </section>
+
+    <section id="architecture" class="card section-card">
+      <div class="section-title">
+        <h2>Architecture</h2>
+        <p>Three simple layers—clean enough for an MVP, strong enough to scale.</p>
+      </div>
+      <div class="grid">
+        <div class="mini"><h4>Layer 1 — Surface</h4><p>Minimal UI for journaling + rewrite. Fast, calm, no clutter.</p></div>
+        <div class="mini"><h4>Layer 2 — Architect</h4><p>On-device assistant: rewrites, summaries, and guardrails—without sending your content away.</p></div>
+        <div class="mini"><h4>Layer 3 — Vault</h4><p>Manual encrypted storage (Keystore). Only what you save becomes part of your legacy.</p></div>
+      </div>
+    </section>
+
+    <section id="sovereignty" class="card section-card">
+      <div class="section-title">
+        <h2>Sovereignty</h2>
+        <p>Privacy is not a setting. It’s a default.</p>
+      </div>
+      <div class="grid">
+        <div class="mini"><h4>Runs locally</h4><p>No cloud content by default. Integrations later—only if you choose.</p></div>
+        <div class="mini"><h4>Manual saves</h4><p>No auto-logging your life. Press “Save” to store anything permanently.</p></div>
+        <div class="mini"><h4>Counts only</h4><p>Weekly insights are metrics, not message content—privacy-safe analytics.</p></div>
+      </div>
+    </section>
+
+    <section id="roadmap" class="card section-card">
+      <div class="section-title">
+        <h2>Roadmap</h2>
+        <p>A focused build path—no fluff, all signal.</p>
+      </div>
+      <div class="grid">
+        <div class="mini"><h4>Phase 0 — MVP</h4><p>Journal + Rewrite · Manual Save · Encrypted Vault · Weekly counts · Export.</p></div>
+        <div class="mini"><h4>Phase 1 — Polish</h4><p>Templates · Streaks · Better summaries · Accessibility · Performance on low-end devices.</p></div>
+        <div class="mini"><h4>Phase 2 — Bridge</h4><p>Optional sync + multi-device—explicit opt-in only.</p></div>
+      </div>
+    </section>
+
+    <section id="contact" class="card section-card">
+      <div class="section-title">
+        <h2>Contact</h2>
+        <p>Let’s build the calmest AI experience on earth.</p>
+      </div>
+      <div class="grid">
+        <div class="mini"><h4>GitHub</h4><p><a href="https://github.com/jannjhay-afk" target="_blank" rel="noreferrer" style="color: rgba(120,255,245,.78); text-decoration:none;">github.com/jannjhay-afk</a></p></div>
+        <div class="mini"><h4>Email</h4><p><a href="mailto:hello@islahnexus.local" style="color: rgba(120,255,245,.78); text-decoration:none;">hello@islahnexus.local</a><br><span style="color:rgba(245,255,253,.55);font-size:12px">Replace this with your real email.</span></p></div>
+        <div class="mini"><h4>Press kit</h4><p>Logo + colors + screenshots (coming soon).</p></div>
+      </div>
+
+      <div class="footer">
+        <div>© <span id="year"></span> Islah Nexus · Hosted on GitHub Pages</div>
+        <div>Theme: <span style="color:var(--teal)">Void</span> · <a href="#home" style="color: rgba(120,255,245,.78); text-decoration:none;">Back to top</a></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // VOID SPIRAL BACKGROUND (Canvas 2D) — spirals upward
+    const canvas = document.getElementById('void');
+    const ctx = canvas.getContext('2d', { alpha: true });
+
+    const DPR = Math.min(2, window.devicePixelRatio || 1);
+    let W = 0, H = 0;
+
+    function resize(){
+      W = Math.floor(window.innerWidth * DPR);
+      H = Math.floor(window.innerHeight * DPR);
+      canvas.width = W;
+      canvas.height = H;
+      canvas.style.width = window.innerWidth + 'px';
+      canvas.style.height = window.innerHeight + 'px';
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduced) {
+      ctx.fillStyle = '#03070b';
+      ctx.fillRect(0,0,W,H);
+    } else {
+      const teal = { r: 123, g: 255, b: 245 };
+      const particles = Array.from({length: 220}, () => ({
+        a: Math.random()*Math.PI*2,
+        r: Math.random(),
+        s: 0.18 + Math.random()*0.55,
+        z: 0.25 + Math.random()*0.85
+      }));
+
+      function rgba(r,g,b,a){ return `rgba(${r|0},${g|0},${b|0},${a})`; }
+
+      let t = 0;
+      function frame(){
+        t += 0.0072;
+
+        // subtle fade for motion blur
+        ctx.fillStyle = 'rgba(3,7,11,0.12)';
+        ctx.fillRect(0,0,W,H);
+
+        const cx = W*0.52;
+        const cyBase = H*0.60;
+        const drift = (t*420) % H; // upward drift
+
+        // spiral arms
+        for (let arm=0; arm<3; arm++){
+          const armPhase = arm * (Math.PI*2/3);
+          for (let i=0; i<420; i++){
+            const p = i/420;
+            const r = p * Math.min(W,H) * 0.62;
+            const a = (p*10.0) + t*2.4 + armPhase;
+            const wobble = Math.sin(p*10 + t*3) * (12 * (1-p));
+            const x = cx + (r + wobble) * Math.cos(a);
+            const y = (cyBase + (r*0.08)) + (r + wobble) * Math.sin(a) - drift + (p*H*0.35);
+
+            const alpha = Math.max(0, (1-p)) * 0.28;
+            const glow = (1-p) * 0.55;
+
+            ctx.beginPath();
+            ctx.fillStyle = rgba(teal.r, teal.g, teal.b, alpha);
+            ctx.arc(x, y, 1.25*DPR, 0, Math.PI*2);
+            ctx.fill();
+
+            if (i % 34 === 0){
+              ctx.beginPath();
+              ctx.fillStyle = rgba(teal.r, teal.g, teal.b, glow*0.18);
+              ctx.arc(x, y, 7.5*DPR, 0, Math.PI*2);
+              ctx.fill();
+            }
+          }
+        }
+
+        // particles
+        for (const p of particles){
+          const rr = p.r * Math.min(W,H) * 0.62;
+          const aa = p.a + t*(0.6+p.s);
+          const x = cx + rr*Math.cos(aa);
+          const y = (cyBase + rr*Math.sin(aa)) - ((t*280*p.z) % (H*1.2)) + (H*0.2);
+
+          const a = 0.06 + 0.18*(1-p.r);
+          ctx.fillStyle = rgba(teal.r, teal.g, teal.b, a);
+          ctx.fillRect(x, y, 1.2*DPR, 1.2*DPR);
+        }
+
+        // center pulse
+        const pulse = (Math.sin(t*2.0)+1)/2;
+        const g = ctx.createRadialGradient(cx, cyBase, 0, cx, cyBase, Math.min(W,H)*0.42);
+        g.addColorStop(0, rgba(teal.r, teal.g, teal.b, 0.10 + pulse*0.08));
+        g.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = g;
+        ctx.fillRect(0,0,W,H);
+
+        requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    }
+  </script>
+</body>
+</html>
